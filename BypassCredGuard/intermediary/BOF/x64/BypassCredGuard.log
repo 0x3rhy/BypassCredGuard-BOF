@@ -1,0 +1,12 @@
+﻿D:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: 中间目录(intermediary\BOF\x64\)包含从另一个项目(SpawnPPID.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
+  用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.42.34435 版
+  版权所有(C) Microsoft Corporation。保留所有权利。
+  cl /c /D BOF /GS- /Fo"intermediary\BOF\x64\\" /external:W1 /TP /c /Fo"intermediary\BOF\x64\source" Source.cpp
+cl : 命令行 warning D9025: 正在重写“/Fointermediary\BOF\x64\”(用“/Fointermediary\BOF\x64\source”)
+  Source.cpp
+  E:\C++\MyProject\BypassCredGuard-BOF\BypassCredGuard\intermediary\BOF\x64\source.obj
+  复制了 1 个文件
+  enumerating sections...
+  found debug section.. zeroing it...
+  closing stream...
+  done!

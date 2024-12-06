@@ -1,0 +1,12 @@
+﻿  用于 x86 的 Microsoft (R) C/C++ 优化编译器 19.37.32822 版
+  版权所有(C) Microsoft Corporation。保留所有权利。
+  cl /c /Oy- /D BOF /GS- /Fo"intermediary\BOF\x86\\" /external:W1 /TC /analyze- /c /Fo"intermediary\BOF\x86\source" Source.c
+cl : 命令行 warning D9025: 正在重写“/Fointermediary\BOF\x86\”(用“/Fointermediary\BOF\x86\source”)
+  Source.c
+Source.c(321): warning C4047: “==”:“DWORD”与“void *”的间接级别不同
+  E:\C++\MyProject\SpawnPPID\SpawnPPID\intermediary\BOF\x86\source.obj
+  复制了 1 个文件
+  enumerating sections...
+  found debug section.. zeroing it...
+  closing stream...
+  done!
