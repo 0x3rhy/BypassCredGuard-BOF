@@ -2,7 +2,4 @@
 
 ![demo](img/demo.png)
 
-
-
-**Thanks for https://github.com/ricardojoserf/NativeBypassCredGuard**
-
+**Thanks to https://github.com/ricardojoserf/NativeBypassCredGuard**
