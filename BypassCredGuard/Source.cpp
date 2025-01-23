@@ -422,7 +422,7 @@ bool ParsePEFile(BYTE* buffer, size_t bufferSize, int* offset, int* useLogonCred
     memset(matchedBytes, 0, 18);
 
     // PE header location
-    uint32_t peHeaderOffset = *(int32_t*)(buffer + 0x3C);
+    uint32_t peHeaderOffset = *(uint32_t*)(buffer + 0x3c);
     uint32_t peSignature = *(uint32_t*)(buffer + peHeaderOffset);
 
     internal_printf("[+] peSignature:\t\t0x%08llx\n", peSignature);
@@ -731,6 +731,7 @@ void RemapNtdll(bool debug) {
     if (debug) {
         internal_printf("[+] DLL remap completed:\tCopied %d bytes from 0x%llX to 0x%llX\n", localNtdllTxtSize, unhookedNtdllTxt, localNtdllTxt);
     }
+    free(textSectionInfo);
 }
 
 
@@ -854,12 +855,12 @@ void go(char* args, int len)
 {
     CHAR* flag;
     bool debug = true;
-	datap parser;
+    datap parser;
 
-	BeaconDataParse(&parser, args, len);
-	flag = BeaconDataExtract(&parser, NULL);
+    BeaconDataParse(&parser, args, len);
+    flag = BeaconDataExtract(&parser, NULL);
 
-	if (!bofstart()) return;
+    if (!bofstart()) return;
 
     if (!my_stricmp(flag, "check") ){
         RemapNtdll(debug);
@@ -871,9 +872,9 @@ void go(char* args, int len)
         exec(1, debug);
     }
 
-	internal_printf("[i] Done\n");
+    internal_printf("[i] Done\n");
 
-	printoutput(TRUE);
+    printoutput(TRUE);
 
 }
 
